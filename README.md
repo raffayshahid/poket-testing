@@ -16,11 +16,14 @@ Run `ng build` to build the project. The build artifacts will be stored in the `
 
 ## Running unit tests
 npm install -g protractor
+
 webdriver-manager update
 
-**Start WebDriver Manager**:
+## Start WebDriver Manager:
+
 webdriver-manager start
-**Run Tests**:
+
+## Run Tests:
 protractor protractor.conf.js
 
 ## Testing Files
