@@ -15,13 +15,24 @@ Run `ng generate component component-name` to generate a new component. You can 
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
 ## Running unit tests
+npm install -g protractor
+webdriver-manager update
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+**Start WebDriver Manager**:
+webdriver-manager start
+**Run Tests**:
+protractor protractor.conf.js
 
-## Running end-to-end tests
+## Testing Files
+- **Unit Tests**: `src/app/app.component.spec.ts`
+- **Integration Tests**: `src/app/app.component.integ.spec.ts`
+- **End-to-End Tests**:
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+## Tools Used
+- **Jasmine**: For writing test cases.
+- **Karma**: For running unit tests.
+- **Protractor**: For end-to-end testing.
 
-## Further help
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+## Conclusion
+This document outlines the testing practices followed for ensuring the quality and reliability of the Todo List Application. For further details on specific tests or bugs, refer to the respective test case or bug report.
