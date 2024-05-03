@@ -1,29 +1,40 @@
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
+  let component: AppComponent;
+  let fixture: ComponentFixture<AppComponent>;
+
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [AppComponent],
+    TestBed.configureTestingModule({
+      declarations: [AppComponent]
     }).compileComponents();
-  });
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
-  });
-
-  it(`should have the 'todo' title`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.title).toEqual('todo');
-  });
-
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
+    fixture = TestBed.createComponent(AppComponent);
+    component = fixture.componentInstance;
     fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, todo');
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+
+  it('should add a new item correctly', () => {
+    component.addItem('test');
+    expect(component.allItems.length).toBe(5);
+    expect(component.allItems[0].description).toBe('test');
+    expect(component.allItems[0].done).toBeFalse();
+  });
+
+  it('should remove an item correctly', () => {
+    const itemToRemove = component.allItems[1];
+    component.remove(itemToRemove);
+    expect(component.allItems.includes(itemToRemove)).toBeFalse();
+  });
+
+  it('should filter items correctly', () => {
+    expect(component.items.length).toBe(3); // Active items
+    component.filter = 'done';
+    expect(component.items.length).toBe(1); // Done items
   });
 });
