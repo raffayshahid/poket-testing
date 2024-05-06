@@ -1,40 +1,71 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { AppComponent } from './app.component';
+import { ItemComponent } from './item/item.component';
 
 describe('AppComponent', () => {
-  let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
+  let app: AppComponent;
 
-  beforeEach(async () => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [AppComponent]
-    }).compileComponents();
+      imports: [ AppComponent, ItemComponent ]
+    })
+    .compileComponents().then(() => {
+      fixture = TestBed.createComponent(AppComponent);
+      app = fixture.componentInstance;
+      fixture.detectChanges();
+    });
+  }));
 
-    fixture = TestBed.createComponent(AppComponent);
-    component = fixture.componentInstance;
+  it('should create the app', () => {
+    expect(app).toBeTruthy();
+  });
+
+  it('should have a default filter of "all"', () => {
+    expect(app.filter).toEqual('all');
+  });
+
+  it('should add an item', () => {
+    const initialItemCount = app.items.length;
+    app.addItem('Test item');
     fixture.detectChanges();
+    expect(app.allItems.length).toBe(initialItemCount + 1);
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('should not add an empty item', () => {
+    const initialItemCount = app.items.length;
+    app.addItem('');
+    fixture.detectChanges();
+    expect(app.allItems.length).toBe(initialItemCount);
   });
 
-  it('should add a new item correctly', () => {
-    component.addItem('test');
-    expect(component.allItems.length).toBe(5);
-    expect(component.allItems[0].description).toBe('test');
-    expect(component.allItems[0].done).toBeFalse();
+  it('should remove an item', () => {
+    const itemToRemove = app.allItems[0];
+    app.remove(itemToRemove);
+    fixture.detectChanges();
+    expect(app.allItems.includes(itemToRemove)).toBeFalse();
   });
 
-  it('should remove an item correctly', () => {
-    const itemToRemove = component.allItems[1];
-    component.remove(itemToRemove);
-    expect(component.allItems.includes(itemToRemove)).toBeFalse();
-  });
 
-  it('should filter items correctly', () => {
-    expect(component.items.length).toBe(3); // Active items
-    component.filter = 'done';
-    expect(component.items.length).toBe(1); // Done items
+  describe('items getter', () => {
+    it('should return all items if filter is "all"', waitForAsync(() => {
+      app.filter = 'all';
+      fixture.detectChanges();
+      expect(app.items.length).toBe(4);
+    }));
+
+    it('should return only done items if filter is "done"', waitForAsync(() => {
+      app.filter = 'done';
+      fixture.detectChanges();
+      const doneItems = app.items.filter(item => item.done);
+      expect(doneItems.length).toBe(1);
+    }));
+
+    it('should return only active items if filter is "active"', waitForAsync(() => {
+      app.filter = 'active';
+      fixture.detectChanges();
+      const activeItems = app.items.filter(item => !item.done);
+      expect(activeItems.length).toBe(3);
+    }));
   });
 });

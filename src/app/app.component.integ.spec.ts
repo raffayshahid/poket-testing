@@ -1,31 +1,50 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed, ComponentFixture } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { ItemComponent } from './item/item.component';
 
 describe('AppComponent Integration', () => {
-  let appFixture: ComponentFixture<AppComponent>;
-  let appComponent: AppComponent;
+  let fixture: ComponentFixture<AppComponent>;
+  let app: AppComponent;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [AppComponent, ItemComponent],
-      imports: []
+      imports: [AppComponent, ItemComponent]
     }).compileComponents();
 
-    appFixture = TestBed.createComponent(AppComponent);
-    appComponent = appFixture.componentInstance;
-    appFixture.detectChanges();
+    fixture = TestBed.createComponent(AppComponent);
+    app = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
-  it('should add and remove an item correctly with child component interaction', () => {
-    appComponent.addItem('integration test');
-    appFixture.detectChanges();
+  it('should create the app', () => {
+    expect(app).toBeTruthy();
+  });
 
-    const itemCountPreRemove = appComponent.items.length;
-    const removeButton = appFixture.nativeElement.querySelector('.btn-warn');
-    removeButton.click();
-    appFixture.detectChanges();
+  it('should add a new item and display it', () => {
+    const initialItemCount = app.items.length;
+    app.addItem('New task');
+    fixture.detectChanges();
 
-    expect(appComponent.items.length).toBe(itemCountPreRemove - 1);
+    expect(app.items.length).toBe(initialItemCount + 1);
+
+    const items = fixture.debugElement.queryAll(By.directive(ItemComponent));
+    expect(items.length).toBe(initialItemCount + 1);
+    expect(items[0].componentInstance.item.description).toEqual('New task'); // Check the first item added
+  });
+
+  it('should remove an item', () => {
+    const initialItemCount = app.items.length;
+    app.addItem('Task to remove');
+    fixture.detectChanges();
+
+    const removeIndex = app.items.findIndex(item => item.description === 'Task to remove');
+    const itemComponent = fixture.debugElement.queryAll(By.directive(ItemComponent))[removeIndex];
+    const removeButton = itemComponent.query(By.css('.btn-warn'));
+
+    removeButton.triggerEventHandler('click', null);
+    fixture.detectChanges();
+
+    expect(app.items.length).toBe(initialItemCount);
   });
 });
